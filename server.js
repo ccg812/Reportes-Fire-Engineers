@@ -1,6 +1,4 @@
-// ------------------------------------
-// ARCHIVO: server.js (CORREGIDO FINAL)
-// ------------------------------------
+// --- DEPENDENCIAS ---
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
@@ -11,10 +9,13 @@ const ejs = require('ejs');
 const fs = require('fs');
 const fsp = require('fs').promises;
 
+// --- CONFIGURACIÓN DE LA APP ---
 const app = express();
-const port = 3000;
+// Railway te da el puerto, usa 3000 como fallback
+const port = process.env.PORT || 3000; 
 
 // Config Multer
+// ¡OJO! Esto escribe en el disco del servidor (ver advertencia al final)
 const tempUploadPath = path.join(__dirname, 'public/uploads/temp');
 if (!fs.existsSync(tempUploadPath)) {
     fs.mkdirSync(tempUploadPath, { recursive: true });
@@ -25,272 +26,189 @@ const upload = multer({ dest: tempUploadPath });
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// Sirve archivos estáticos (imágenes, etc.) desde la carpeta 'public'
 app.use(express.static('public'));
 
-// Config DB
+// --- !! CAMBIO CRÍTICO: CONFIGURACIÓN DB DE RAILWAY !! ---
+// 1. Usamos variables de entorno de Railway
 const dbConfig = {
-    host: 'localhost',
-    user: 'root',
-    password: 'Julio2713', // ¡TU CONTRASEÑA!
-    database: 'reportesFiredb'
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 };
 
+// 2. Creamos un POOL de conexiones, no una conexión simple.
+// Esto es esencial para el rendimiento en la nube.
+const pool = mysql.createPool(dbConfig);
+console.log("Pool de conexiones a MySQL creado.");
+
+
 // --- RUTAS DE LA API ---
+// (Modificadas para usar el POOL de conexiones)
 
 // GET /api/registros
 app.get('/api/registros', async (req, res) => {
-    let connection;
+    // Usamos el pool directamente para una consulta simple
     try {
-        connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute('SELECT Id, NombreCliente, NombreEspecialista, FechaCreacion FROM RegistrosPanelControl ORDER BY FechaCreacion DESC');
+        const [rows] = await pool.execute('SELECT Id, NombreCliente, NombreEspecialista, FechaCreacion FROM RegistrosPanelControl ORDER BY FechaCreacion DESC');
         res.json(rows);
-    } catch (err) { /* Error handling */ res.status(500).send(err.message); }
-    finally { if (connection) await connection.end(); }
+    } catch (err) { 
+        console.error("Error en GET /api/registros:", err.message);
+        res.status(500).send(err.message); 
+    }
 });
 
 // GET /api/registros/:id
 app.get('/api/registros/:id', async (req, res) => {
     const registroId = req.params.id;
-    let connection;
+    let connection; // Necesitamos conexión para múltiples consultas
     try {
-        connection = await mysql.createConnection(dbConfig);
+        // 3. Obtenemos una conexión del POOL
+        connection = await pool.getConnection(); 
+        
         const [registroRows] = await connection.execute('SELECT * FROM RegistrosPanelControl WHERE Id = ?', [registroId]);
         const [fuenteRows] = await connection.execute('SELECT * FROM FuentesPoder WHERE RegistroPanelControlId = ?', [registroId]);
         const [ampRows] = await connection.execute('SELECT * FROM Amplificadores WHERE RegistroPanelControlId = ?', [registroId]);
         const [detalleRows] = await connection.execute('SELECT * FROM DetallesDispositivo WHERE RegistroPanelControlId = ?', [registroId]);
+        
         if (registroRows.length === 0) return res.status(404).send('Registro no encontrado');
+        
         res.json({
             registro: registroRows[0],
             fuente: fuenteRows[0] || null,
             amplificador: ampRows[0] || null,
             detalles: detalleRows
         });
-    } catch (err) { /* Error handling */ res.status(500).send(err.message); }
-    finally { if (connection) await connection.end(); }
+    } catch (err) { 
+        console.error(`Error en GET /api/registros/${registroId}:`, err.message);
+        res.status(500).send(err.message); 
+    } finally { 
+        // 4. Liberamos la conexión de vuelta al POOL
+        if (connection) connection.release(); 
+    }
 });
 
 // POST /api/registros
 app.post('/api/registros', upload.any(), async (req, res) => {
-    let connection;
+    let connection; // Necesario para la transacción
     let nuevoRegistroId;
     const tempFiles = req.files;
     const firmaClienteBase64 = req.body.firmaClienteImagen;
     const firmaEspecialistaBase64 = req.body.firmaEspecialistaImagen;
     let firmaClienteImagePath = null;
-    let firmaEspecialistaImagePath = null; // Ruta temporal
+    let firmaEspecialistaImagePath = null; 
 
     try {
         // --- 1. Construir objetos ---
-        const registro = {
-            nombreCliente: req.body.nombreCliente, direccionCliente: req.body.direccionCliente, contactoCliente: req.body.contactoCliente, telefonoCliente: req.body.telefonoCliente, correoElectronicoCliente: req.body.correoElectronicoCliente,
-            fechaHoraInicio: req.body.fechaHoraInicio || null, antesCualquierPruebaAviso: req.body.antesCualquierPruebaAviso, predioDelCliente: req.body.predioDelCliente, departamento: req.body.departamento, mantenimientoLazo: req.body.mantenimientoLazo,
-            nombreFirmaResponsableDepto: req.body.nombreFirmaResponsableDepto, cantidadDetectores: req.body.cantidadDetectores || null, seguridadSecom: req.body.seguridadSecom, cantidadModulos: req.body.cantidadModulos || null, nombreEspecialista: req.body.nombreEspecialista,
-            ubicacionPanelControl: req.body.ubicacionPanelControl, fabricanteSistema: req.body.fabricanteSistema, estiloCableado: req.body.estiloCableado, numeroLazos: req.body.numeroLazos || null, modeloPanelControl: req.body.modeloPanelControl,
-            cuentaConSistemaDeVoceo: req.body.cuentaConSistemaDeVoceo === 'true', descripcionVoceo: req.body.descripcionVoceo, seEncuentraEnSistemaNormal: req.body.seEncuentraEnSistemaNormal === 'true',
-            voltajePrimario: req.body.voltajePrimario || null, voltajeSecundario: req.body.voltajeSecundario || null, voltajeBateria1: req.body.voltajeBateria1 || null, voltajeBateria2: req.body.voltajeBateria2 || null, voltajeLazos: req.body.voltajeLazos,
-            ubicacionTableroElec: req.body.ubicacionTableroElec, noDeTermica: req.body.noDeTermica,
-            totalEventosDeAlarma: req.body.totalEventosDeAlarma || null, totalProblemas: req.body.totalProblemas || null, totalMonitor: req.body.totalMonitor || null, sistemaLibreDeFalloTierra: req.body.sistemaLibreDeFalloTierra === 'true', otros: req.body.otros,
-            observacionesGenerales: req.body.observacionesGenerales,
-            firmaClienteFechaHora: null, FirmaEspecialistaPath: null
-        };
-        const fuente = { /* ... objeto fuente ... */ }; // (Sin cambios, por brevedad)
-        const amplificador = { /* ... objeto amplificador ... */ }; // (Sin cambios, por brevedad)
-        const detalles = []; // (Sin cambios, por brevedad)
-        const detalleCount = parseInt(req.body.detalleCount) || 0;
-        for (let i = 0; i < detalleCount; i++) { detalles.push({ /* ... objeto detalle ... */ }); } // (Sin cambios, por brevedad)
+        // (Tu código de construir objetos va aquí, es idéntico)
+        const registro = { /* ... tu objeto registro ... */ };
+        const fuente = { /* ... tu objeto fuente ... */ };
+        const amplificador = { /* ... tu objeto amplificador ... */ };
+        const detalles = []; 
+        // (Tu lógica de loop para detalles va aquí)
 
         // --- 2. Iniciar Transacción y Guardar ---
-        connection = await mysql.createConnection(dbConfig);
+        // 3. Obtenemos conexión del POOL para la transacción
+        connection = await pool.getConnection(); 
         await connection.beginTransaction();
+        console.log("Transacción iniciada...");
 
-        // Guardar firmas temporalmente
-        const uploadDirTemp = path.join(__dirname, 'public/uploads/temp');
-        if (!fs.existsSync(uploadDirTemp)) fs.mkdirSync(uploadDirTemp, { recursive: true });
-        const guardarFirmaBase64 = async (base64Data, prefijo) => {
-            if (base64Data && base64Data.startsWith('data:image/png;base64,')) {
-                const data = base64Data.replace(/^data:image\/png;base64,/, "");
-                const filename = `${prefijo}_${Date.now()}.png`;
-                const tempPath = path.join(uploadDirTemp, filename);
-                await fsp.writeFile(tempPath, data, 'base64');
-                return `uploads/temp/${filename}`;
-            } return null;
-        };
-        firmaClienteImagePath = await guardarFirmaBase64(firmaClienteBase64, 'firma_cliente');
-        firmaEspecialistaImagePath = await guardarFirmaBase64(firmaEspecialistaBase64, 'firma_especialista');
+        // (Todo tu código de guardar firmas, insertar registro, 
+        // mover archivos, insertar fuente, amplificador y detalles
+        // es IDÉNTICO... úsalo aquí tal cual)
 
-        // Insertar registro SIN firmas
-        const registroQuery = `INSERT INTO RegistrosPanelControl SET ?`;
-        const [registroResult] = await connection.query(registroQuery, registro);
-        nuevoRegistroId = registroResult.insertId;
-
-        // Mover firmas a carpeta final y ACTUALIZAR DB
-        const finalFolderPath = path.join(__dirname, 'public/uploads', nuevoRegistroId.toString());
-         if (!fs.existsSync(finalFolderPath)) fs.mkdirSync(finalFolderPath, { recursive: true });
-        const moverFirmaFinal = async (tempPath, tipo) => {
-            if (!tempPath) return null;
-            const tempFullPath = path.join(__dirname, 'public', tempPath);
-            // Verificar si el archivo temporal existe antes de mover
-            try {
-                await fsp.access(tempFullPath); // Lanza error si no existe
-            } catch (e) {
-                console.warn(`Archivo de firma temporal no encontrado, omitiendo: ${tempPath}`);
-                return null; // No se puede mover, retornar null
-            }
-            const finalFullPath = path.join(finalFolderPath, path.basename(tempPath));
-            await fsp.rename(tempFullPath, finalFullPath);
-            const finalRelativePath = `uploads/${nuevoRegistroId}/${path.basename(tempPath)}`;
-            
-            // ¡¡CORRECCIÓN AQUÍ!! Usar los nombres exactos de columna de la DB
-            const columna = (tipo === 'cliente') ? 'FirmaClienteFechaHora' : 'FirmaEspecialistaPath';
-            
-            await connection.execute(
-                `UPDATE RegistrosPanelControl SET ${columna} = ? WHERE Id = ?`,
-                [finalRelativePath, nuevoRegistroId]
-            );
-            console.log(`Firma ${tipo} guardada en DB: ${finalRelativePath}`); // Log para verificar
-            return finalRelativePath;
-        };
-        await moverFirmaFinal(firmaClienteImagePath, 'cliente');
-        await moverFirmaFinal(firmaEspecialistaImagePath, 'especialista'); // <--- Llamada corregida
-
-        // Mover resto de imágenes y asignar paths
-        const permanentFilesPath = path.join(__dirname, 'public/uploads', nuevoRegistroId.toString());
-        const moverArchivo = async (file) => {
-            if (!file) return null;
-            const newPath = path.join(permanentFilesPath, file.filename);
-            const relativePath = `uploads/${nuevoRegistroId}/${file.filename}`;
-             try { await fsp.access(file.path); } catch(e){ console.warn(`Archivo temporal no encontrado ${file.path}`); return null;}
-            await fsp.rename(file.path, newPath);
-            return relativePath;
-        };
-        const fileMoves = [];
-        // ... (código idéntico para llenar fileMoves) ...
-        await Promise.all(fileMoves);
-
-        // Insertar Fuente, Amplificador, Detalles
-        fuente.RegistroPanelControlId = nuevoRegistroId;
-        await connection.query(`INSERT INTO FuentesPoder SET ?`, fuente);
-        amplificador.RegistroPanelControlId = nuevoRegistroId;
-        await connection.query(`INSERT INTO Amplificadores SET ?`, amplificador);
-        if (detalles.length > 0) {
-            const detalleQuery = `INSERT INTO DetallesDispositivo SET ?`;
-            for (const detalle of detalles) {
-                detalle.RegistroPanelControlId = nuevoRegistroId;
-                await connection.query(detalleQuery, detalle);
-            }
-        }
+        // ...
+        // ... tu lógica de guardado ...
+        // ...
 
         await connection.commit();
+        console.log("Transacción completada (commit).");
         res.status(201).send({ message: 'Reporte completo guardado con éxito' });
+
     } catch (err) {
-        if (connection) await connection.rollback();
+        if (connection) {
+            await connection.rollback();
+            console.log("Transacción revertida (rollback).");
+        }
         console.error("Error en POST /api/registros (Transacción):", err.message, err.stack);
         res.status(500).send(err.message);
     } finally {
-        if (connection) await connection.end();
-        // Limpiar archivos temporales
-        if (tempFiles) {
-            for (const file of tempFiles) {
-                try { await fsp.unlink(file.path); } catch (e) { /* Ignorar */ }
-            }
-        }
-        const limpiarFirmaTemp = async (path) => {
-            if (path && path.includes('/temp/')) {
-                const fullTempPath = path.join(__dirname, 'public', path);
-                try { await fsp.access(fullTempPath); await fsp.unlink(fullTempPath); } catch(e) { /* Ignorar si ya no existe */ }
-            }
-        };
-        await limpiarFirmaTemp(firmaClienteImagePath);
-        await limpiarFirmaTemp(firmaEspecialistaImagePath);
+        // 4. Liberamos la conexión de vuelta al POOL
+        if (connection) connection.release(); 
+        
+        // (Tu lógica de limpieza de archivos temporales es idéntica)
+        // ...
     }
 });
 
 // DELETE /api/registros/:id
-app.delete('/api/registros/:id', async (req, res) => { /* ... (código idéntico) ... */ });
+app.delete('/api/registros/:id', async (req, res) => { 
+    // (Asegúrate de adaptar esta ruta también para que use el POOL)
+    // ... 
+});
 
 // GET /api/registros/:id/pdf
 app.get('/api/registros/:id/pdf', async (req, res) => {
     const registroId = req.params.id;
-    let connection;
-    // Función helper para URL de archivo (CORREGIDA)
-    const getFileUrl = (relativePath) => {
-        if (!relativePath) return null;
-        // Reemplazar barras invertidas si existen (Windows)
-        const normalizedPath = relativePath.replace(/\\/g, '/');
-        const absolutePath = path.join(__dirname, 'public', normalizedPath);
-        // Volver a normalizar por si acaso
-        const urlPath = absolutePath.replace(/\\/g, '/');
-        // Asegurarse de que empiece con file:///
-        if (urlPath.startsWith('/')) {
-             return `file://${urlPath}`; // Linux/Mac
-        } else {
-             return `file:///${urlPath}`; // Windows
-        }
-    };
-    const addAbsolutePaths = (obj, props) => {
-        if (!obj) return;
-        for (const prop of props) {
-            // Verificar si la propiedad existe y no es null
-            if (obj.hasOwnProperty(prop) && obj[prop]) {
-                 console.log(`Generando URL para: ${prop} = ${obj[prop]}`); // Log para depurar
-                obj[prop + '_Absolute'] = getFileUrl(obj[prop]);
-                console.log(`URL generada: ${obj[prop + '_Absolute']}`); // Log para depurar
-            } else {
-                 obj[prop + '_Absolute'] = null; // Asegurar que la propiedad _Absolute exista
-            }
-        }
-    };
+    let connection; // Necesario para múltiples consultas
+
+    // (Tu función helper 'getFileUrl' es idéntica)
+    const getFileUrl = (relativePath) => { /* ... tu código ... */ };
+    // (Tu función helper 'addAbsolutePaths' es idéntica)
+    const addAbsolutePaths = (obj, props) => { /* ... tu código ... */ };
+
     try {
-        connection = await mysql.createConnection(dbConfig);
+        // 3. Obtenemos conexión del POOL
+        connection = await pool.getConnection(); 
+        
+        console.log(`Generando PDF para registro ${registroId}...`);
+        
+        // (Tu lógica de consulta de datos es idéntica)
         const [registroRows] = await connection.execute('SELECT * FROM RegistrosPanelControl WHERE Id = ?', [registroId]);
-        const [fuenteRows] = await connection.execute('SELECT * FROM FuentesPoder WHERE RegistroPanelControlId = ?', [registroId]);
-        const [ampRows] = await connection.execute('SELECT * FROM Amplificadores WHERE RegistroPanelControlId = ?', [registroId]);
-        const [detalleRows] = await connection.execute('SELECT * FROM DetallesDispositivo WHERE RegistroPanelControlId = ?', [registroId]);
+        // ... más consultas ...
+
         if (registroRows.length === 0) return res.status(404).send('Registro no encontrado');
 
-        const data = {
-            registro: registroRows[0],
-            fuente: fuenteRows[0],
-            amplificador: ampRows[0],
-            detalles: detalleRows
-        };
+        const data = { /* ... tu objeto data ... */ };
 
-        // Añadir rutas absolutas (incluyendo logos)
-        data.logoPath = getFileUrl('logo.png'); // <-- ¡ASUMIENDO QUE TU LOGO ESTÁ EN public/img/logo.png!
-
-        addAbsolutePaths(data.registro, ['firmaClienteFechaHora', 'FirmaEspecialistaPath']);
-        addAbsolutePaths(data.fuente, ['ImagenGaleria1Path', 'ImagenGaleria2Path', 'ImagenGaleria3Path']);
-        addAbsolutePaths(data.amplificador, ['ImagenGaleria1Path', 'ImagenGaleria2Path', 'ImagenGaleria3Path']);
-        data.detalles.forEach(d => {
-            addAbsolutePaths(d, ['ImagenPruebaPath', 'ImagenAntesPath', 'ImagenDespuesPath']);
-        });
-
+        // (Tu lógica de añadir paths absolutos es idéntica)
+        // data.logoPath = getFileUrl('img/logo.png'); // <-- ¡ASUMIENDO QUE TU LOGO ESTÁ EN public/img/logo.png!
+        // ...
+        
+        // (Tu lógica de EJS y Puppeteer es idéntica)
         const templatePath = path.join(__dirname, 'pdf-template.ejs');
         const templateHtml = fs.readFileSync(templatePath, 'utf-8');
         const html = ejs.render(templateHtml, data);
 
+        console.log("Lanzando Puppeteer...");
         const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         const page = await browser.newPage();
-        
-        // Log HTML generado para depuración (opcional)
-        // console.log("HTML para PDF:", html); 
         
         await page.setContent(html, { waitUntil: 'networkidle0' });
         const pdfBuffer = await page.pdf({ format: 'Letter', printBackground: true, margin: { top: '40px', right: '40px', bottom: '40px', left: '40px' } });
         await browser.close();
+        console.log("PDF generado exitosamente.");
+
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=Reporte_${registroId}.pdf`);
         res.send(pdfBuffer);
+
     } catch (err) {
         console.error("Error en GET /api/registros/pdf:", err.message, err.stack);
         res.status(500).send(`Error generando PDF: ${err.message}`);
     } finally {
-        if (connection) await connection.end();
+        // 4. Liberamos la conexión de vuelta al POOL
+        if (connection) connection.release(); 
     }
 });
 
 // --- Iniciar el servidor ---
 app.listen(port, () => {
-    console.log(`Servidor API corriendo en http://localhost:${port}`);
+    console.log(`Servidor API corriendo en puerto ${port}`);
     console.log('Sirviendo frontend desde la carpeta "public"');
 });
