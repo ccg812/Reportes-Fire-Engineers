@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte <%= registro.Id %></title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 9px; margin: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        th, td { border: 1px solid #000; padding: 4px; vertical-align: top; }
+        th { background-color: #f0f0f0; text-align: left; }
+        .header-logo { width: 100%; margin-bottom: 15px; }
+        .header-logo img { max-height: 60px; }
+        .clear { clear: both; }
+        .section-title { font-size: 11px; font-weight: bold; background-color: #e0e0e0; text-align: center; padding: 5px; margin-top: 15px; }
+        .page-break { page-break-after: always; }
+        .img-detalle { max-width: 80px; height: auto; margin: 2px; vertical-align: middle;}
+        .img-galeria { max-width: 150px; height: auto; margin: 5px; vertical-align: middle;}
+        .img-firma { max-height: 80px; width: auto; display: block; margin: 5px auto; }
+        .bool-si::after { content: 'Sí'; } .bool-no::after { content: 'No'; }
+        .text-center { text-align: center; }
+        .no-border { border: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header-logo">
+        <div class="clear"></div>
+    </div>
+    <h1 style="text-align: center;">Reporte de Panel de Control</h1>
+
+    <div class="section-title">Check List Panel de Control</div>
+    <table>
+        <tr> <th colspan="2">Datos del Cliente</th> <th colspan="2">Datos de Fire Engineers</th> </tr>
+        <tr> <td><b>Nombre:</b></td><td><%= registro.NombreCliente %></td> <td><b>Empresa:</b></td><td><%= registro.NombreEmpresaFE %></td> </tr>
+        <tr> <td><b>Dirección:</b></td><td><%= registro.DireccionCliente %></td> <td><b>Dirección:</b></td><td><%= registro.DireccionFE %></td> </tr>
+        <tr> <td><b>Contacto:</b></td><td><%= registro.ContactoCliente %></td> <td><b>Representante:</b></td><td><%= registro.RepresentanteEmpresaFE %></td> </tr>
+        <tr> <td><b>Teléfono:</b></td><td><%= registro.TelefonoCliente %></td> <td><b>Teléfono:</b></td><td><%= registro.TelefonoFE %></td> </tr>
+        <tr> <td><b>Correo:</b></td><td><%= registro.CorreoElectronicoCliente %></td> <td><b>Correo:</b></td><td><%= registro.CorreoElectronicoFE %></td> </tr>
+    </table>
+    <table>
+         <tr> <td><b>Fecha Inicio:</b></td><td><%= registro.FechaHoraInicio ? new Date(registro.FechaHoraInicio).toLocaleString() : '' %></td> <td><b>Aviso Antes:</b></td><td><%= registro.AntesCualquierPruebaAviso %></td> </tr>
+         <tr> <td><b>Predio:</b></td><td><%= registro.PredioDelCliente %></td> <td><b>Depto:</b></td><td><%= registro.Departamento %></td> </tr>
+         <tr> <td><b>Manto. Lazo:</b></td><td><%= registro.MantenimientoLazo %></td> <td><b>Responsable:</b></td><td><%= registro.NombreFirmaResponsableDepto %></td> </tr>
+         <tr> <td><b>Cant. Detectores:</b></td><td><%= registro.CantidadDetectores %></td> <td><b>Seguridad Secom:</b></td><td><%= registro.SeguridadSecom %></td> </tr>
+         <tr> <td><b>Cant. Módulos:</b></td><td><%= registro.CantidadModulos %></td> <td><b>Especialista:</b></td><td><%= registro.NombreEspecialista %></td> </tr>
+    </table>
+     <table>
+        <tr> <th colspan="4">Check List Panel</th> </tr>
+        <tr> <td><b>Ubicación:</b></td><td><%= registro.UbicacionPanelControl %></td> <td><b>Fabricante:</b></td><td><%= registro.FabricanteSistema %></td> </tr>
+        <tr> <td><b>Estilo Cableado:</b></td><td><%= registro.EstiloCableado %></td> <td><b>Num. Lazos:</b></td><td><%= registro.NumeroLazos %></td> </tr>
+        <tr> <td><b>Modelo Panel:</b></td><td><%= registro.ModeloPanelControl %></td> <td><b>¿Voceo?</b></td><td class="<%= registro.CuentaConSistemaDeVoceo ? 'bool-si' : 'bool-no' %>"></td> </tr>
+        <tr> <td><b>Desc. Voceo:</b></td><td><%= registro.DescripcionVoceo %></td> <td><b>¿Sistema Normal?</b></td><td class="<%= registro.SeEncuentraEnSistemaNormal ? 'bool-si' : 'bool-no' %>"></td> </tr>
+    </table>
+    <table>
+        <tr> <th colspan="4">Mediciones Panel</th> </tr>
+        <tr> <td><b>V. Primario:</b></td><td><%= registro.VoltajePrimario %></td> <td><b>V. Secundario:</b></td><td><%= registro.VoltajeSecundario %></td> </tr>
+        <tr> <td><b>V. Bat 1:</b></td><td><%= registro.VoltajeBateria1 %></td> <td><b>V. Bat 2:</b></td><td><%= registro.VoltajeBateria2 %></td> </tr>
+        <tr> <td><b>V. Lazos:</b></td><td><%= registro.VoltajeLazos %></td> <td><b>Ubic. Tablero:</b></td><td><%= registro.UbicacionTableroElec %></td> </tr>
+        <tr> <td><b>No. Térmica:</b></td><td><%= registro.NoDeTermica %></td> <td colspan="2"></td></tr>
+    </table>
+     <table>
+        <tr> <th colspan="4">Totales</th> </tr>
+        <tr> <td><b>Total Alarmas:</b></td><td><%= registro.TotalEventosDeAlarma %></td> <td><b>Total Problemas:</b></td><td><%= registro.TotalProblemas %></td> </tr>
+        <tr> <td><b>Total Monitor:</b></td><td><%= registro.TotalMonitor %></td> <td><b>¿Libre Fallo Tierra?</b></td><td class="<%= registro.SistemaLibreDeFalloTierra ? 'bool-si' : 'bool-no' %>"></td> </tr>
+        <tr> <td><b>Otros:</b></td><td colspan="3"><%= registro.Otros %></td> </tr>
+    </table>
+
+    <% if (fuente) { %>
+        <div class="section-title">Fuente de Poder</div>
+        <table>
+             <tr> <td><b>Fabricante:</b> <%= fuente.Fabricante %></td><td><b>Modelo:</b> <%= fuente.Modelo %></td><td><b>Ubicación:</b> <%= fuente.UbicacionAPS %></td></tr>
+             <tr> <td><b>V. Primario:</b> <%= fuente.VoltajePrimario %></td><td><b>V. Secundario:</b> <%= fuente.VoltajeSecundario %></td><td><b>V. Bat 1-2:</b> <%= fuente.VoltajeBateria1y2 %></td></tr>
+             <tr> <td><b>V. Nac 1-4:</b> <%= fuente.VoltajeNac1_2y3_4 %></td><td><b>Ubic. Tablero:</b> <%= fuente.UbicacionTableroElec %></td><td><b>No. Térmica:</b> <%= fuente.NoDeTermica %></td></tr>
+             <tr> <td><b>¿Normal?</b></td><td class="<%= fuente.FuenteEnSistemaNormal ? 'bool-si' : 'bool-no' %>"></td> <td><b>¿Prob Nac 1-2?</b></td><td class="<%= fuente.ProblemaNac1y2 ? 'bool-si' : 'bool-no' %>"></td></tr>
+             <tr> <td><b>¿Prob Nac 3-4?</b></td><td class="<%= fuente.ProblemaNac3y4 ? 'bool-si' : 'bool-no' %>"></td> <td><b>¿Prob Bat?</b></td><td class="<%= fuente.ProblemaDeBateria ? 'bool-si' : 'bool-no' %>"></td></tr>
+             <tr> <td><b>¿Fallo Tierra?</b></td><td class="<%= fuente.FalloATierra ? 'bool-si' : 'bool-no' %>"></td> <td colspan="2"></td></tr>
+        </table>
+        <div> <b>Galería Fuente:</b><br />
+            <% if (fuente.ImagenGaleria1Path) { %><img src="<%= fuente.ImagenGaleria1Path_Absolute %>" class="img-galeria" /><% } %>
+            <% if (fuente.ImagenGaleria2Path) { %><img src="<%= fuente.ImagenGaleria2Path_Absolute %>" class="img-galeria" /><% } %>
+            <% if (fuente.ImagenGaleria3Path) { %><img src="<%= fuente.ImagenGaleria3Path_Absolute %>" class="img-galeria" /><% } %>
+        </div>
+    <% } %>
+
+    <% if (amplificador) { %>
+        <div class="section-title">Amplificador</div>
+         <table>
+             <tr> <td><b>Fabricante:</b> <%= amplificador.Fabricante %></td><td><b>Modelo:</b> <%= amplificador.Modelo %></td><td><b>Ubicación:</b> <%= amplificador.UbicacionAmplificador %></td></tr>
+             <tr> <td><b>V. Primario:</b> <%= amplificador.VoltajePrimario %></td><td><b>V. Secundario:</b> <%= amplificador.VoltajeSecundario %></td><td><b>V. Bat 1-2:</b> <%= amplificador.VoltajeBateria1y2 %></td></tr>
+             <tr> <td><b>V. Nac 1-4:</b> <%= amplificador.VoltajeNac1_2y3_4 %></td><td><b>Ubic. Tablero:</b> <%= amplificador.UbicacionTableroElec %></td><td><b>No. Térmica:</b> <%= amplificador.NoDeTermica %></td></tr>
+             <tr> <td><b>¿Normal?</b></td><td class="<%= amplificador.AmplificadorEnSistemaNormal ? 'bool-si' : 'bool-no' %>"></td> <td><b>¿Prob Nac 1-2?</b></td><td class="<%= amplificador.ProblemaNac1y2 ? 'bool-si' : 'bool-no' %>"></td></tr>
+             <tr> <td><b>¿Prob Nac 3-4?</b></td><td class="<%= amplificador.ProblemaNac3y4 ? 'bool-si' : 'bool-no' %>"></td> <td><b>¿Prob Bat?</b></td><td class="<%= amplificador.ProblemaDeBateria ? 'bool-si' : 'bool-no' %>"></td></tr>
+             <tr> <td><b>¿Fallo Tierra?</b></td><td class="<%= amplificador.FalloATierra ? 'bool-si' : 'bool-no' %>"></td> <td colspan="2"></td></tr>
+        </table>
+        <div> <b>Galería Amplificador:</b><br />
+            <% if (amplificador.ImagenGaleria1Path) { %><img src="<%= amplificador.ImagenGaleria1Path_Absolute %>" class="img-galeria" /><% } %>
+            <% if (amplificador.ImagenGaleria2Path) { %><img src="<%= amplificador.ImagenGaleria2Path_Absolute %>" class="img-galeria" /><% } %>
+            <% if (amplificador.ImagenGaleria3Path) { %><img src="<%= amplificador.ImagenGaleria3Path_Absolute %>" class="img-galeria" /><% } %>
+        </div>
+    <% } %>
+
+    <div class="page-break"></div>
+
+    <div class="section-title">DETALLE DE DISPOSITIVOS</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Lazo</th><th>No.</th><th>Tipo</th><th>Ubicación</th><th>Prueba</th><th>Reportó</th>
+                <th>Led</th><th>Daño</th><th>Obstruido</th><th>Limpieza</th><th>Obs. No.</th><th>Imágenes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% detalles.forEach(detalle => { %>
+                <tr>
+                    <td><%= detalle.Lazo %></td><td><%= detalle.NumeroDispositivo %></td><td><%= detalle.TipoDispositivo %></td><td><%= detalle.UbicacionDispositivo %></td>
+                    <td><%= detalle.RealizarPruebaFuncionamiento %></td><td><%= detalle.ElDispositivoReportoAPanel %></td><td><%= detalle.LosLedSeEncuentranParpadeando %></td>
+                    <td><%= detalle.ElDispositivoEstaLibreDeDano %></td><td><%= detalle.ElDispositivoSeEncuentraObstruido %></td><td><%= detalle.RealizarLimpiezaDeDispositivo %></td>
+                    <td><%= detalle.NumeroObservacion %></td>
+                    <td class="text-center">
+                        <% if (detalle.ImagenPruebaPath) { %><img src="<%= detalle.ImagenPruebaPath_Absolute %>" class="img-detalle" /><% } %>
+                        <% if (detalle.ImagenAntesPath) { %><img src="<%= detalle.ImagenAntesPath_Absolute %>" class="img-detalle" /><% } %>
+                        <% if (detalle.ImagenDespuesPath) { %><img src="<%= detalle.ImagenDespuesPath_Absolute %>" class="img-detalle" /><% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="section-title">Observaciones</div>
+    <div style="border: 1px solid #000; padding: 5px; min-height: 100px; white-space: pre-wrap;">
+        <%= registro.ObservacionesGenerales %>
+    </div>
+
+    <table style="margin-top: 50px;" class="no-border">
+        <tr class="no-border">
+            <td class="no-border text-center" style="vertical-align: bottom;">
+                <% if (registro.firmaClienteFechaHora) { %>
+                    <img src="<%= registro.firmaClienteFechaHora_Absolute %>" class="img-firma" alt="Firma Cliente"/>
+                <% } else { %><br/><br/><br/><% } %>
+                _______________________________________<br />
+                POR PARTE DEL CLIENTE
+            </td>
+            <td class="no-border text-center" style="vertical-align: bottom;">
+                <% if (registro.FirmaEspecialistaPath) { %>
+                    <img src="<%= registro.FirmaEspecialistaPath_Absolute %>" class="img-firma" alt="Firma Especialista"/>
+                <% } else { %><br/><br/><br/><% } %>
+                _______________________________________<br />
+                FIRE ENGINEERS<br />
+                <%= registro.NombreEspecialista %>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

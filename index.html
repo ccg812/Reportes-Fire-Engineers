@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes Fire Engineers</title>
+    <link rel="icon" href="icono.png" type="image/x-icon">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <img src="logo.png" alt="Logo Fire Engineers" class="logo">
+            <h1>Nuevo Reporte de Panel de Control</h1>
+        </header>
+
+        <form id="reporteForm">
+            <h3>Sección 1: Datos Generales (Panel de Control)</h3>
+            <h4>Datos del Cliente</h4>
+            <div class="grid-2">
+                <div class="form-group"> <label for="nombreCliente">Nombre Cliente:</label> <input type="text" id="nombreCliente" name="nombreCliente"> </div>
+                <div class="form-group"> <label for="direccionCliente">Dirección:</label> <input type="text" id="direccionCliente" name="direccionCliente"> </div>
+                <div class="form-group"> <label for="contactoCliente">Contacto:</label> <input type="text" id="contactoCliente" name="contactoCliente"> </div>
+                <div class="form-group"> <label for="telefonoCliente">Teléfono:</label> <input type="text" id="telefonoCliente" name="telefonoCliente"> </div>
+            </div>
+            <div class="form-group"> <label for="correoElectronicoCliente">Correo Electrónico:</label> <input type="email" id="correoElectronicoCliente" name="correoElectronicoCliente"> </div>
+
+            <h4>Detalles de la Prueba</h4>
+            <div class="grid-2">
+                <div class="form-group"> <label for="fechaHoraInicio">Fecha y Hora Inicio:</label> <input type="datetime-local" id="fechaHoraInicio" name="fechaHoraInicio"> </div>
+                <div class="form-group"> <label for="antesCualquierPruebaAviso">Aviso antes de prueba:</label> <input type="text" id="antesCualquierPruebaAviso" name="antesCualquierPruebaAviso"> </div>
+                <div class="form-group"> <label for="predioDelCliente">Predio Cliente:</label> <input type="text" id="predioDelCliente" name="predioDelCliente" value="Aguamilpa 275"> </div>
+                <div class="form-group"> <label for="departamento">Departamento:</label> <input type="text" id="departamento" name="departamento"> </div>
+                <div class="form-group"> <label for="mantenimientoLazo">Mantenimiento Lazo:</label> <input type="text" id="mantenimientoLazo" name="mantenimientoLazo" value="1 y 2"> </div>
+                <div class="form-group"> <label for="nombreFirmaResponsableDepto">Nombre Responsable:</label> <input type="text" id="nombreFirmaResponsableDepto" name="nombreFirmaResponsableDepto"> </div>
+                <div class="form-group"> <label for="cantidadDetectores">Cant. Detectores:</label> <input type="number" id="cantidadDetectores" name="cantidadDetectores" value="161"> </div>
+                 <div class="form-group"> <label for="seguridadSecom">Seguridad Secom:</label> <input type="text" id="seguridadSecom" name="seguridadSecom"> </div>
+                <div class="form-group"> <label for="cantidadModulos">Cant. Módulos:</label> <input type="number" id="cantidadModulos" name="cantidadModulos" value="36"> </div>
+                <div class="form-group"> <label for="nombreEspecialista">Nombre Especialista:</label> <input type="text" id="nombreEspecialista" name="nombreEspecialista"> </div>
+            </div>
+
+            <h4>Check List Panel de Control</h4>
+            <div class="grid-2">
+                <div>
+                    <h5>Datos Generales</h5>
+                    <div class="form-group"> <label for="ubicacionPanelControl">Ubicación panel:</label> <input type="text" id="ubicacionPanelControl" name="ubicacionPanelControl" value="cuarto de vigilancia"> </div>
+                    <div class="form-group"> <label for="fabricanteSistema">Fabricante:</label> <input type="text" id="fabricanteSistema" name="fabricanteSistema" value="edwards"> </div>
+                    <div class="form-group"> <label for="estiloCableado">Estilo cableado:</label> <input type="text" id="estiloCableado" name="estiloCableado" value="tipo b"> </div>
+                    <div class="form-group"> <label for="numeroLazos">Número lazos:</label> <input type="number" id="numeroLazos" name="numeroLazos" value="2"> </div>
+                    <div class="form-group"> <label for="modeloPanelControl">Modelo Panel:</label> <input type="text" id="modeloPanelControl" name="modeloPanelControl" value="est3x"> </div>
+                    <div class="form-group checkbox-group"> <input type="checkbox" id="cuentaConSistemaDeVoceo" name="cuentaConSistemaDeVoceo"> <label for="cuentaConSistemaDeVoceo">¿Sistema voceo?</label> </div>
+                    <div class="form-group"> <label for="descripcionVoceo">Descripción:</label> <input type="text" id="descripcionVoceo" name="descripcionVoceo"> </div>
+                    <div class="form-group checkbox-group"> <input type="checkbox" id="seEncuentraEnSistemaNormal" name="seEncuentraEnSistemaNormal"> <label for="seEncuentraEnSistemaNormal">¿Sistema normal?</label> </div>
+                </div>
+                <div>
+                    <h5>Mediciones</h5>
+                    <div class="form-group"> <label for="voltajePrimario">Voltaje primario:</label> <input type="number" step="0.1" id="voltajePrimario" name="voltajePrimario" value="119.1"> </div>
+                    <div class="form-group"> <label for="voltajeSecundario">Voltaje secundario:</label> <input type="number" step="0.1" id="voltajeSecundario" name="voltajeSecundario" value="0"> </div>
+                    <div class="form-group"> <label for="voltajeBateria1">Voltaje batería 1:</label> <input type="number" step="0.1" id="voltajeBateria1" name="voltajeBateria1" value="13.8"> </div>
+                    <div class="form-group"> <label for="voltajeBateria2">Voltaje batería 2:</label> <input type="number" step="0.1" id="voltajeBateria2" name="voltajeBateria2" value="13.8"> </div>
+                    <div class="form-group"> <label for="voltajeLazos">Voltaje Lazos:</label> <input type="text" id="voltajeLazos" name="voltajeLazos" value="16-19, 16-20"> </div>
+                    <div class="form-group"> <label for="ubicacionTableroElec">Ubicación tablero elec.:</label> <input type="text" id="ubicacionTableroElec" name="ubicacionTableroElec" value="junto al panel"> </div>
+                    <div class="form-group"> <label for="noDeTermica">No. Térmica:</label> <input type="text" id="noDeTermica" name="noDeTermica" value="2 pastillas"> </div>
+                </div>
+            </div>
+
+            <h4>Totales</h4>
+            <div class="grid-2">
+                <div class="form-group"> <label for="totalEventosDeAlarma">Total eventos alarma:</label> <input type="number" id="totalEventosDeAlarma" name="totalEventosDeAlarma" value="7"> </div>
+                <div class="form-group"> <label for="totalProblemas">Total problemas:</label> <input type="number" id="totalProblemas" name="totalProblemas" value="7"> </div>
+                <div class="form-group"> <label for="totalMonitor">Total monitor:</label> <input type="number" id="totalMonitor" name="totalMonitor" value="0"> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="sistemaLibreDeFalloTierra" name="sistemaLibreDeFalloTierra"> <label for="sistemaLibreDeFalloTierra">¿Libre fallo tierra?</label> </div>
+            </div>
+            <div class="form-group"> <label for="otros">Otros:</label> <textarea id="otros" name="otros" rows="3"></textarea> </div>
+            <hr>
+
+            <h3>Sección 2: Fuente de Poder</h3>
+            <div class="grid-3">
+                <div class="form-group"> <label for="fuenteFabricante">Fabricante:</label> <input type="text" id="fuenteFabricante" name="fuenteFabricante" value="EDWARS"> </div>
+                <div class="form-group"> <label for="fuenteModelo">Modelo:</label> <input type="text" id="fuenteModelo" name="fuenteModelo" value="APS6"> </div>
+                <div class="form-group"> <label for="fuenteUbicacionAPS">Ubicación APS:</label> <input type="text" id="fuenteUbicacionAPS" name="fuenteUbicacionAPS" value="cuarto de vigilancia"> </div>
+                <div class="form-group"> <label for="fuenteVoltajePrimario">Voltaje primario:</label> <input type="text" id="fuenteVoltajePrimario" name="fuenteVoltajePrimario" value="119.1"> </div>
+                <div class="form-group"> <label for="fuenteVoltajeSecundario">Voltaje secundario:</label> <input type="text" id="fuenteVoltajeSecundario" name="fuenteVoltajeSecundario"> </div>
+                <div class="form-group"> <label for="fuenteVoltajeBateria1y2">Voltaje batería 1 y 2:</label> <input type="text" id="fuenteVoltajeBateria1y2" name="fuenteVoltajeBateria1y2" value="12.4 V 12.4 V"> </div>
+                <div class="form-group"> <label for="fuenteVoltajeNac1_2y3_4">Voltaje Nac 1-2 y 3-4:</label> <input type="text" id="fuenteVoltajeNac1_2y3_4" name="fuenteVoltajeNac1_2y3_4"> </div>
+                <div class="form-group"> <label for="fuenteUbicacionTableroElec">Ubicación tablero elec.:</label> <input type="text" id="fuenteUbicacionTableroElec" name="fuenteUbicacionTableroElec" value="junto al panel"> </div>
+                <div class="form-group"> <label for="fuenteNoDeTermica">No. Térmica:</label> <input type="text" id="fuenteNoDeTermica" name="fuenteNoDeTermica" value="Patilla 1"> </div>
+            </div>
+            <div class="grid-3">
+                <div class="form-group checkbox-group"> <input type="checkbox" id="fuenteEnSistemaNormal" name="fuenteEnSistemaNormal"> <label for="fuenteEnSistemaNormal">¿Fuente normal?</label> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="fuenteProblemaNac1y2" name="fuenteProblemaNac1y2"> <label for="fuenteProblemaNac1y2">¿Problema nac's 1-2?</label> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="fuenteProblemaNac3y4" name="fuenteProblemaNac3y4"> <label for="fuenteProblemaNac3y4">¿Problema nac's 3-4?</label> </div>
+                 <div class="form-group checkbox-group"> <input type="checkbox" id="fuenteProblemaDeBateria" name="fuenteProblemaDeBateria"> <label for="fuenteProblemaDeBateria">¿Problema batería?</label> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="fuenteFalloATierra" name="fuenteFalloATierra"> <label for="fuenteFalloATierra">¿Fallo tierra?</label> </div>
+            </div>
+            <h4>Galería Fuente de Poder</h4>
+            <div class="grid-3">
+                <div class="form-group"> <label for="fuenteImagen1">Imagen 1:</label> <input type="file" id="fuenteImagen1" name="fuenteImagen1"> </div>
+                <div class="form-group"> <label for="fuenteImagen2">Imagen 2:</label> <input type="file" id="fuenteImagen2" name="fuenteImagen2"> </div>
+                <div class="form-group"> <label for="fuenteImagen3">Imagen 3:</label> <input type="file" id="fuenteImagen3" name="fuenteImagen3"> </div>
+            </div>
+            <hr>
+
+            <h3>Sección 3: Amplificador</h3>
+            <div class="grid-3">
+                 <div class="form-group"> <label for="ampFabricante">Fabricante:</label> <input type="text" id="ampFabricante" name="ampFabricante" value="EDWARS"> </div>
+                <div class="form-group"> <label for="ampModelo">Modelo:</label> <input type="text" id="ampModelo" name="ampModelo" value="50W"> </div>
+                <div class="form-group"> <label for="ampUbicacionAmplificador">Ubicación Amplificador:</label> <input type="text" id="ampUbicacionAmplificador" name="ampUbicacionAmplificador" value="cuarto de vigilancia"> </div>
+                <div class="form-group"> <label for="ampVoltajePrimario">Voltaje primario:</label> <input type="text" id="ampVoltajePrimario" name="ampVoltajePrimario" value="119.1"> </div>
+                <div class="form-group"> <label for="ampVoltajeSecundario">Voltaje secundario:</label> <input type="text" id="ampVoltajeSecundario" name="ampVoltajeSecundario"> </div>
+                <div class="form-group"> <label for="ampVoltajeBateria1y2">Voltaje batería 1 y 2:</label> <input type="text" id="ampVoltajeBateria1y2" name="ampVoltajeBateria1y2" value="12.4 V 12.4 V"> </div>
+                <div class="form-group"> <label for="ampVoltajeNac1_2y3_4">Voltaje Nac 1-2 y 3-4:</label> <input type="text" id="ampVoltajeNac1_2y3_4" name="ampVoltajeNac1_2y3_4"> </div>
+                <div class="form-group"> <label for="ampUbicacionTableroElec">Ubicación tablero elec.:</label> <input type="text" id="ampUbicacionTableroElec" name="ampUbicacionTableroElec" value="junto al panel"> </div>
+                <div class="form-group"> <label for="ampNoDeTermica">No. Térmica:</label> <input type="text" id="ampNoDeTermica" name="ampNoDeTermica" value="Patilla 1"> </div>
+            </div>
+            <div class="grid-3">
+                <div class="form-group checkbox-group"> <input type="checkbox" id="ampAmplificadorEnSistemaNormal" name="ampAmplificadorEnSistemaNormal"> <label for="ampAmplificadorEnSistemaNormal">¿Amplificador normal?</label> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="ampProblemaNac1y2" name="ampProblemaNac1y2"> <label for="ampProblemaNac1y2">¿Problema nac's 1-2?</label> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="ampProblemaNac3y4" name="ampProblemaNac3y4"> <label for="ampProblemaNac3y4">¿Problema nac's 3-4?</label> </div>
+                 <div class="form-group checkbox-group"> <input type="checkbox" id="ampProblemaDeBateria" name="ampProblemaDeBateria"> <label for="ampProblemaDeBateria">¿Problema batería?</label> </div>
+                <div class="form-group checkbox-group"> <input type="checkbox" id="ampFalloATierra" name="ampFalloATierra"> <label for="ampFalloATierra">¿Fallo tierra?</label> </div>
+            </div>
+            <h4>Galería Amplificador</h4>
+            <div class="grid-3">
+                <div class="form-group"> <label for="ampImagen1">Imagen 1:</label> <input type="file" id="ampImagen1" name="ampImagen1"> </div>
+                <div class="form-group"> <label for="ampImagen2">Imagen 2:</label> <input type="file" id="ampImagen2" name="ampImagen2"> </div>
+                <div class="form-group"> <label for="ampImagen3">Imagen 3:</label> <input type="file" id="ampImagen3" name="ampImagen3"> </div>
+            </div>
+            <hr>
+
+            <h3>Sección 4: Detalles de Dispositivos</h3>
+            <div class="table-container">
+                <table id="tablaDetalles">
+                    <thead>
+                        <tr>
+                            <th>Lazo</th><th>No. Disp.</th><th>Tipo</th><th>Ubicación</th>
+                            <th>Prueba</th><th>Reportó</th><th>Led</th><th>Daño</th>
+                            <th>Obstruido</th><th>Limpieza</th><th>Obs. No.</th>
+                            <th>Img Prueba</th><th>Img Antes</th><th>Img Después</th>
+                            <th>Quitar</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button type="button" id="btnAgregarFila" class="btn-secundario">Agregar Dispositivo</button>
+            <hr>
+
+            <h3>Sección 5: Observaciones y Firmas</h3>
+            <div class="form-group"> <label for="observacionesGenerales">Observaciones Generales:</label> <textarea id="observacionesGenerales" name="observacionesGenerales" rows="5"></textarea> </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Firma del Cliente:</label>
+                    <div class="signature-pad-container"> <canvas id="signature-canvas-cliente" class="signature-canvas"></canvas> </div>
+                    <button type="button" id="clear-signature-cliente" class="btn-secundario">Limpiar Firma Cliente</button>
+                    <input type="hidden" id="firmaClienteImagen" name="firmaClienteImagen">
+                </div>
+                <div class="form-group">
+                    <label>Firma del Especialista (Fire Engineers):</label>
+                    <div class="signature-pad-container"> <canvas id="signature-canvas-fe" class="signature-canvas"></canvas> </div>
+                    <button type="button" id="clear-signature-fe" class="btn-secundario">Limpiar Firma Especialista</button>
+                    <input type="hidden" id="firmaEspecialistaImagen" name="firmaEspecialistaImagen">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-guardar">Guardar Reporte Completo</button>
+        </form>
+
+        <hr>
+
+        <h2>Registros Guardados</h2>
+        <div class="table-container-listado">
+             <div id="registrosListado"> <p>Cargando registros...</p> </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

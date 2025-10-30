@@ -1,0 +1,133 @@
+/* ------------------------------------ */
+/* ARCHIVO: public/style.css (FINAL)    */
+/* ------------------------------------ */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 20px;
+}
+
+.logo {
+    max-width: 200px;
+    margin-bottom: 10px;
+}
+
+h1, h2, h3 {
+    color: #d9534f;
+    margin-top: 10px;
+}
+h1 { font-size: 2em; }
+h3 { color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 25px; }
+h4 { color: #555; margin-top: 20px; margin-bottom: 10px; }
+h5 { color: #777; margin-top: 15px; margin-bottom: 10px; font-size: 1em; font-weight: 600; }
+
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="datetime-local"],
+.form-group textarea,
+.form-group select {
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+    box-sizing: border-box; font-size: 14px; font-family: inherit;
+}
+.form-group textarea { resize: vertical; }
+.form-group input[type="file"] {
+    width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+    box-sizing: border-box; font-size: 13px; font-family: inherit;
+}
+input[type="file"]::file-selector-button {
+    background-color: #f0f0f0; border: none; padding: 8px; border-radius: 3px;
+    cursor: pointer; margin-right: 10px;
+}
+
+.checkbox-group { display: flex; align-items: center; margin-top: 15px; min-height: 40px; }
+.checkbox-group input[type="checkbox"] { margin-right: 10px; width: 16px; height: 16px; }
+.checkbox-group label { margin-bottom: 0; font-weight: normal; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.btn-guardar {
+    background-color: #d9534f; color: white; padding: 12px 20px; border: none;
+    border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 600;
+    margin-top: 20px; width: 100%; box-sizing: border-box;
+}
+.btn-guardar:hover { background-color: #c9302c; }
+.btn-secundario {
+    background-color: #5bc0de; color: white; padding: 8px 12px; border: none;
+    border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 10px;
+}
+.btn-secundario:hover { background-color: #31b0d5; }
+.btn-quitar {
+    background-color: #f0ad4e; color: white; padding: 5px 8px; border: none;
+    border-radius: 4px; cursor: pointer; font-size: 12px;
+}
+.btn-quitar:hover { background-color: #ec971f; }
+
+.table-container-listado { width: 100%; overflow-x: auto; }
+#registrosListado table { width: 100%; min-width: 600px; border-collapse: collapse; margin-top: 10px; }
+#registrosListado th, #registrosListado td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+#registrosListado th { background-color: #f2f2f2; }
+
+.table-container { width: 100%; overflow-x: auto; border: 1px solid #ddd; }
+#tablaDetalles { width: 100%; min-width: 1100px; border-collapse: collapse; margin-top: 0; }
+#tablaDetalles th, #tablaDetalles td { border: 1px solid #ddd; padding: 4px; text-align: left; }
+#tablaDetalles th { background-color: #f9f9f9; font-size: 11px; padding: 8px 4px; white-space: nowrap; }
+#tablaDetalles input[type="text"], #tablaDetalles select {
+    width: 100%; min-width: 80px; padding: 5px; border: 1px solid #ccc;
+    border-radius: 3px; box-sizing: border-box; font-size: 12px;
+}
+#tablaDetalles input[type="file"] { width: 100%; min-width: 120px; font-size: 10px; }
+#tablaDetalles input[type="file"]::file-selector-button { padding: 4px; font-size: 10px; }
+
+hr { border: 0; border-top: 2px solid #eee; margin: 40px 0; }
+
+.btn-pdf, .btn-clonar, .btn-eliminar {
+    display: inline-block; padding: 5px 10px; border-radius: 4px; text-decoration: none;
+    font-size: 13px; font-weight: 600; border: none; cursor: pointer; margin: 2px;
+    color: white; white-space: nowrap;
+}
+.btn-pdf { background-color: #5cb85c; } .btn-pdf:hover { background-color: #4cae4c; }
+.btn-clonar { background-color: #337ab7; } .btn-clonar:hover { background-color: #286090; }
+.btn-eliminar { background-color: #d9534f; } .btn-eliminar:hover { background-color: #c9302c; }
+#registrosListado .acciones { text-align: center; }
+
+/* Firma */
+.signature-pad-container {
+    border: 1px dashed #ccc; border-radius: 4px; width: 100%;
+    height: 200px; margin-bottom: 10px; position: relative; box-sizing: border-box;
+}
+.signature-canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+#clear-signature-cliente,
+#clear-signature-fe { margin-top: 0; }
+
+@media (max-width: 768px) {
+    body { padding: 0; }
+    .container { padding: 15px; width: 100%; box-sizing: border-box; }
+    h1 { font-size: 1.5em; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 15px; }
+    #registrosListado .acciones { min-width: 100px; }
+    .btn-pdf, .btn-clonar, .btn-eliminar {
+        display: block; width: 90%; margin-left: auto; margin-right: auto; box-sizing: border-box;
+    }
+}
